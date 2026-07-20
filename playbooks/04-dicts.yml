@@ -1,0 +1,182 @@
+---
+# ═══════════════════════════════════════════════════════════════
+#  SECTION 4: DICTS  (25 examples)
+# ═══════════════════════════════════════════════════════════════
+#
+# Expected output:
+#
+#   ─── SECTION 4: Dicts ───
+#   4.02  dict_a["name"] = Alice
+#   4.03  dict_d["nested"]["deep"]["key"] = secret
+#   4.04  keys() = ['name', 'age', 'city']
+#   4.05  values() = ['Alice', 30, 'Brussels']
+#   4.06  items() = [('name','Alice'),('age',30),('city','Brussels')]
+#   4.07  combine(dict_a, dict_b) = {'name':'Alice','age':31,...}
+#   4.08  combine(recursive=true) = {'a':{'x':1,'y':2}}
+#   4.09  dict2items({"a":1,"b":2}) = [{'key':'a','value':1},...]
+#   4.10  items2dict([{key:"name",value:"Bob"},...]) = {'name':'Bob','age':25}
+#   4.11  map(attribute="val") from dict_c.items = ['x', 'y']
+#   4.12  dict_e.get("missing","fallback") = {}
+#   4.13  |dict| len(dict_a) = 3
+#   4.14  "name" in dict_a = True, "missing" in dict_a = False
+#   4.15  omit "age" from dict_a = {'name':'Alice','city':'Brussels'}
+#   4.16  dict_a keys (sorted) = ['age', 'city', 'name']
+#   4.17  subset keys vals = ['Alice', 'Brussels']
+#   4.18  reject "age" = {'name':'Alice','city':'Brussels'}
+#   4.19  to_json(dict_a) = {"name":"Alice","age":30,"city":"Brussels"}
+#   4.20  to_yaml(dict_a) = {age:30, city:Brussels, name:Alice}
+#   4.22  filter items by id=2 then extract val = y
+#   4.23  dictsort(dict_a) = [('age',30),('city','Brussels'),('name','Alice')]
+#   4.24  dict2items values from dict_a = ['Alice',30,'Brussels']
+#   4.25  combine with list_merge=append = {'items':[1,2]}
+# ═══════════════════════════════════════════════════════════════
+
+- name: "04 — Dicts: access, merge, transform, serialize"
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ../vars/dicts.yml
+  vars:
+    output_lines: []
+
+  tasks:
+    - name: "Initialize output"
+      ansible.builtin.set_fact:
+        output_lines: ["", "─── SECTION 4: Dicts ───"]
+
+    # 4.02  direct key access
+    - name: "4.02  Access key"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.02  dict_a[\"name\"] = ' ~ dict_a.name ] }}"
+
+    # 4.03  nested key access
+    - name: "4.03  Access nested key"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.03  dict_d[\"nested\"][\"deep\"][\"key\"] = ' ~ dict_d.nested.deep.key ] }}"
+
+    # 4.04  extract keys
+    - name: "4.04  Keys"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.04  keys() = ' ~ (dict_a.keys() | list) ] }}"
+
+    # 4.05  extract values
+    - name: "4.05  Values"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.05  values() = ' ~ (dict_a.values() | list) ] }}"
+
+    # 4.06  extract items (key-value pairs)
+    - name: "4.06  Items (key-value pairs)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.06  items() = ' ~ (dict_a.items() | list) ] }}"
+
+    # 4.07  merge two dicts
+    - name: "4.07  Combine (merge) two dicts"
+      ansible.builtin.set_fact:
+        combined: "{{ dict_a | combine(dict_b) }}"
+    - name: "4.07b"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.07  combine(dict_a, dict_b) = ' ~ combined ] }}"
+
+    # 4.08  recursive merge
+    - name: "4.08  Combine with recursive merge"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.08  combine(recursive=true) = ' ~ ({\"a\": {\"x\": 1}} | combine({\"a\": {\"y\": 2}}, recursive=true)) ] }}"
+
+    # 4.09  dict → list of {key, value} dicts
+    - name: "4.09  Dict to items list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.09  dict2items({\"a\":1, \"b\":2}) = ' ~ ({\"a\": 1, \"b\": 2} | dict2items) ] }}"
+
+    # 4.10  list of {key, value} → dict
+    - name: "4.10  Items list to dict"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.10  items2dict([{key:\"name\",value:\"Bob\"},...]) = ' ~ (kv_pairs | items2dict) ] }}"
+
+    # 4.11  extract values from nested dict list
+    - name: "4.11  Extract field from list of dicts"
+      ansible.builtin.set_fact:
+        dc_items: "{{ dict_c['items'] }}"
+    - name: "4.11c"
+      ansible.builtin.set_fact:
+        extracted: "{{ dc_items | map(attribute='val') | list }}"
+    - name: "4.11d"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.11  map(attribute=\"val\") from dict_c.items = ' ~ extracted ] }}"
+
+    # 4.12  default filter on empty dict
+    - name: "4.12  Default value"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.12  dict_e.get(\"missing\", \"fallback\") = ' ~ (dict_e | default({\"missing\": \"fallback\"})) ] }}"
+
+    # 4.13  dict length
+    - name: "4.13  Dict length"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.13  |dict| len(dict_a) = ' ~ (dict_a | length) ] }}"
+
+    # 4.14  key existence check
+    - name: "4.14  Check if key exists"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.14  \"name\" in dict_a = ' ~ (\"name\" in dict_a) ~ ', \"missing\" in dict_a = ' ~ (\"missing\" in dict_a) ] }}"
+
+    # 4.15  omit key via rejectattr
+    - name: "4.15  Select keys (omit)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.15  omit \"age\" from dict_a = ' ~ (dict_a | dict2items | rejectattr('key', 'equalto', 'age') | items2dict) ] }}"
+
+    # 4.16  sorted keys
+    - name: "4.16  Keys as sorted list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.16  dict_a keys (sorted) = ' ~ (dict_a.keys() | list | sort) ] }}"
+
+    # 4.17  extract subset by key names
+    - name: "4.17  Subset by manual filter"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.17  subset keys [\"name\",\"city\"] vals = ' ~ [dict_a.get('name'), dict_a.get('city')] ] }}"
+
+    # 4.18  reject specific key
+    - name: "4.18  Reject keys"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.18  reject \"age\" = ' ~ (dict_a | dict2items | rejectattr('key', 'equalto', 'age') | items2dict) ] }}"
+
+    # 4.19  serialize to JSON
+    - name: "4.19  dict => JSON string"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.19  to_json(dict_a) = ' ~ (dict_a | to_json) ] }}"
+
+    # 4.20  serialize to YAML
+    - name: "4.20  dict => YAML string"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.20  to_yaml(dict_a) = ' ~ (dict_a | to_yaml) ] }}"
+
+    # 4.22  filter + extract from list of dicts
+    - name: "4.22  Extract value from list of dicts by condition"
+      ansible.builtin.set_fact:
+        items_list: "{{ dict_c['items'] }}"
+    - name: "4.22b"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.22  filter items by id=2 then extract val = ' ~ (items_list | selectattr('id', 'equalto', 2) | map(attribute='val') | first) ] }}"
+
+    # 4.23  dictsort (sorted key-value tuples)
+    - name: "4.23  Dict to list of tuples via dictsort"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.23  dictsort(dict_a) = ' ~ (dict_a | dictsort) ] }}"
+
+    # 4.24  extract values via dict2items + map
+    - name: "4.24  Dict2items map values"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.24  dict2items values from dict_a = ' ~ (dict_a | dict2items | map(attribute='value') | list) ] }}"
+
+    # 4.25  combine with list_merge=append for list values
+    - name: "4.25  Combine with recursive and list_merge"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.25  combine with list_merge=append = ' ~ ({\"items\": [1]} | combine({\"items\": [2]}, recursive=True, list_merge=\"append\") ) ] }}"
+
+    # ── Write section output ──
+    - name: "Write section 4 output"
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/../output-04.txt"
+        content: |
+          {% for line in output_lines -%}
+          {{ line }}
+          {% endfor %}
