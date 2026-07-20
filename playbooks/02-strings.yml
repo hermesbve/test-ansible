@@ -1,0 +1,176 @@
+---
+# ═══════════════════════════════════════════════════════════════
+#  SECTION 2: STRINGS  (25 examples)
+# ═══════════════════════════════════════════════════════════════
+#
+# Expected output:
+#
+#   ─── SECTION 2: Strings ───
+#   2.02  lower("Ansible RockS!") = ansible rocks!
+#   2.03  upper("Hello World") = HELLO WORLD
+#   2.04  capitalize("hello world") = Hello world
+#   2.05  title("the quick brown fox") = The Quick Brown Fox Jumps
+#   2.06  trim("  Ansible RockS!  ") = "Ansible RockS!"
+#   2.07  length("Hello World") = 11
+#   2.08  "Hello World"[0:5] = "Hello" , [6:] = "World"
+#   2.09  "Hello" in "Hello World" = True
+#   2.10  replace("Hello World", "World", "Ansible") = Hello Ansible
+#   2.11  regex_replace("[aeiou]", "_") = H_ll_ W_rld
+#   2.12  regex_search("W\\w+") = World
+#   2.13  regex_findall("\w+") = the, quick, brown, fox, jumps
+#   2.14  split("apple,banana,cherry,date", ",") = ['apple', 'banana', ...]
+#   2.15  join(["a","b","c"], "|") = a|b|c
+#   2.16  reverse list of chars "Hello" = olleH
+#   2.17  b64encode("Hello") = SGVsbG8=
+#   2.18  b64decode("SGVsbG8=") = Hello
+#   2.19  urlencode("hello world") = hello%20world
+#   2.20  list("ABC") = ['ABC']
+#   2.21  starts with "Hel" = True, ends with "rld" = True
+#   2.22  wordcount("the quick brown fox jumps") = 5
+#   2.23  center("Hi", 9) = "    Hi   "
+#   2.24  format("%s=%d") = answer=42
+#   2.25  indent("line1\nline2", 4) = line1\n    line2
+# ═══════════════════════════════════════════════════════════════
+
+- name: "02 — Strings: case, split/join, regex, base64, padding"
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ../vars/strings.yml
+  vars:
+    output_lines: []
+
+  tasks:
+    - name: "Initialize output"
+      ansible.builtin.set_fact:
+        output_lines: ["", "─── SECTION 2: Strings ───"]
+
+    # 2.02  lowercase
+    - name: "2.02  Lowercase"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.02  lower(\"Ansible RockS!\") = ' ~ (str_case | trim | lower) ] }}"
+
+    # 2.03  uppercase
+    - name: "2.03  Uppercase"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.03  upper(\"Hello World\") = ' ~ (str_hello | upper) ] }}"
+
+    # 2.04  capitalize (first letter uppercase, rest lower)
+    - name: "2.04  Capitalize"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.04  capitalize(\"hello world\") = ' ~ (str_hello | lower | capitalize) ] }}"
+
+    # 2.05  title case (each word capitalized)
+    - name: "2.05  Title case"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.05  title(\"the quick brown fox\") = ' ~ (str_sentence | title) ] }}"
+
+    # 2.06  trim whitespace
+    - name: "2.06  Trim whitespace"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.06  trim(\"  Ansible RockS!  \") = \"' ~ (str_case | trim) ~ '\"'] }}"
+
+    # 2.07  length
+    - name: "2.07  Length of string"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.07  length(\"Hello World\") = ' ~ (str_hello | length) ] }}"
+
+    # 2.08  slice / substring
+    - name: "2.08  Substring / slice"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.08  \"Hello World\"[0:5] = \"' ~ str_hello[:5] ~ '\" , [6:] = \"' ~ str_hello[6:] ~ '\"'] }}"
+
+    # 2.09  contains test
+    - name: "2.09  Contains (search)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.09  \"Hello\" in \"Hello World\" = ' ~ ('Hello' in str_hello) ] }}"
+
+    # 2.10  string replace
+    - name: "2.10  Replace"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.10  replace(\"Hello World\", \"World\", \"Ansible\") = ' ~ (str_hello | replace('World', 'Ansible')) ] }}"
+
+    # 2.11  regex replace (vowels → underscore)
+    - name: "2.11  Regex replace"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.11  regex_replace(\"Hello World\", \"[aeiou]\", \"_\") = ' ~ (str_hello | regex_replace('[aeiou]', '_')) ] }}"
+
+    # 2.12  regex search (find first match)
+    - name: "2.12  Regex search (find)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.12  regex_search(\"Hello World\", \"W\\\\w+\") = ' ~ (str_hello | regex_search('W\\w+')) ] }}"
+
+    # 2.13  regex findall (find all matches)
+    - name: "2.13  Regex findall"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.13  regex_findall(\"the quick brown fox\", \"\\\\w+\") = ' ~ (str_sentence | regex_findall('\\w+') | join(', ')) ] }}"
+
+    # 2.14  split into list
+    - name: "2.14  Split string"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.14  split(\"apple,banana,cherry,date\", \",\") = ' ~ (str_parts | split(',')) ] }}"
+
+    # 2.15  join list into string
+    - name: "2.15  Join list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.15  join([\"a\",\"b\",\"c\"], \"|\") = ' ~ ([\"a\", \"b\", \"c\"] | join('|')) ] }}"
+
+    # 2.16  reverse via list of chars
+    - name: "2.16  Reverse list (chars)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.16  reverse list of chars \"Hello\" = ' ~ (\"Hello\" | list | reverse | join('')) ] }}"
+
+    # 2.17  base64 encode
+    - name: "2.17  Base64 encode"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.17  b64encode(\"Hello\") = ' ~ (\"Hello\" | b64encode) ] }}"
+
+    # 2.18  base64 decode
+    - name: "2.18  Base64 decode"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.18  b64decode(\"SGVsbG8=\") = ' ~ (\"SGVsbG8=\" | b64decode) ] }}"
+
+    # 2.19  URL encoding
+    - name: "2.19  URL encode"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.19  urlencode(\"hello world\") = ' ~ (\"hello world\" | urlencode) ] }}"
+
+    # 2.20  list() filter on string
+    - name: "2.20  String to list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.20  list(\"ABC\") = ' ~ ([\"ABC\"] | list) ] }}"
+
+    # 2.21  starts_with / ends_with
+    - name: "2.21  Starts / ends with"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.21  starts with \"Hel\" = ' ~ (str_hello.startswith('Hel')) ~ ', ends with \"rld\" = ' ~ (str_hello.endswith('rld')) ] }}"
+
+    # 2.22  word count via split
+    - name: "2.22  Word count"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.22  wordcount(\"the quick brown fox jumps\") = ' ~ (str_sentence.split() | length) ] }}"
+
+    # 2.23  center padding
+    - name: "2.23  Center / pad"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.23  center(\"Hi\", 9) = \"' ~ (\"Hi\" | center(9)) ~ '\"'] }}"
+
+    # 2.24  printf-style format
+    - name: "2.24  Format string (printf-style)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.24  format(\"%s=%d\") = ' ~ (\"%s=%d\" % (\"answer\", 42)) ] }}"
+
+    # 2.25  indent multiline
+    - name: "2.25  Indent multiline"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.25  indent(\"line1\\\\nline2\", 4) = ' ~ (\"line1\\nline2\" | indent(4)) ] }}"
+
+    # ── Write section output ──
+    - name: "Write section 2 output"
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/../output-02.txt"
+        content: |
+          {% for line in output_lines -%}
+          {{ line }}
+          {% endfor %}
