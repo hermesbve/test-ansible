@@ -1,4 +1,3 @@
-─ yaml                                                                                                                                                              
 name: Ansible Demo                                                                                                                                                  
   on:                                                                                                                                                                 
     push:                                                                                                                                                             
