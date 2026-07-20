@@ -1,0 +1,103 @@
+
+─── SECTION 1: Numbers ───
+1.02  42 + 7 = 49
+1.03  42 - 7 = 35
+1.04  42 * 7 = 294
+1.05  42 / 7 = 6.0
+1.06  42 // 7 = 6
+1.07  42 % 5 = 2
+1.08  7 ** 3 = 343
+1.09  abs(-8) = 8
+1.10  round(3.14) = 3.0
+1.11  round(3.14, 1) = 3.1
+1.12  round(3.14, 0, "ceil") = 4.0
+1.13  round(3.14, 0, "floor") = 3.0
+1.14  3.14 | int = 3
+1.15  random(50, 100) = 51
+1.16  min([42, 7, 3, -8, 100]) = -8
+1.17  max([42, 7, 3, -8, 100]) = 100
+1.18  sum([42, 7, 3, -8, 100]) = 144
+1.19  product of 2*3*5 = 30
+1.20  255 in hex (via format) = ff
+1.21  42 > 7 ? yes : no = yes
+1.22  42 is divisible by 7 = True
+1.23  42 is even = True, 7 is odd = True
+1.24  -8 is less than 0 = True, 42 is greater than 0 = True
+1.25  hex 0xff = 255 via int filter: 255
+
+─── SECTION 2: Strings ───
+2.02  lower("Ansible RockS!") = ansible rocks!
+2.03  upper("Hello World") = HELLO WORLD
+2.04  capitalize("hello world") = Hello world
+2.05  title("the quick brown fox") = The Quick Brown Fox Jumps
+2.06  trim("  Ansible RockS!  ") = "Ansible RockS!"
+2.07  length("Hello World") = 11
+2.08  "Hello World"[0:5] = "Hello" , [6:] = "World"
+2.09  "Hello" in "Hello World" = True
+2.10  replace("Hello World", "World", "Ansible") = Hello Ansible
+2.11  regex_replace("Hello World", "[aeiou]", "_") = H_ll_ W_rld
+2.12  regex_search("Hello World", "W\\w+") = World
+2.13  regex_findall("the quick brown fox", "\\w+") = the, quick, brown, fox, jumps
+2.14  split("apple,banana,cherry,date", ",") = ['apple', 'banana', 'cherry', 'date']
+2.15  join(["a","b","c"], "|") = a|b|c
+2.16  reverse list of chars "Hello" = olleH
+2.17  b64encode("Hello") = SGVsbG8=
+2.18  b64decode("SGVsbG8=") = Hello
+2.19  urlencode("hello world") = hello%20world
+2.20  list("ABC") = ['ABC']
+2.21  starts with "Hel" = True, ends with "rld" = True
+2.22  wordcount("the quick brown fox jumps") = 5
+2.23  center("Hi", 9) = "    Hi   "
+2.24  format("%s=%d") = answer=42
+2.25  indent("line1\\nline2", 4) = line1\nline2
+
+─── SECTION 3: Lists ───
+3.02  first([3,1,4,1,5]) = 3
+3.03  last([3,1,4,1,5,9,2,6]) = 6
+3.04  length([3,1,4,1,5,9,2,6]) = 8
+3.05  sort([3,1,4,1,5,9,2,6]) = [1, 1, 2, 3, 4, 5, 6, 9]
+3.06  sort(reverse=true) = [9, 6, 5, 4, 3, 2, 1, 1]
+3.07  reverse([1,2,3]) = [3, 2, 1]
+3.08  [3,1,4,1,5,9][:3] = [3, 1, 4], [3:] = [1, 5, 9, 2, 6]
+3.09  unique([1,2,2,3,3,3,4]) = [1, 2, 3, 4]
+3.10  flatten([[1,2],[3,4],[5]]) = [1, 2, 3, 4, 5]
+3.11  flatten(levels=1) = [1, 2, 3, 4, 5]
+3.12  union([1,2,3,4,5], [4,5,6,7,8]) = [1, 2, 3, 4, 5, 6, 7, 8]
+3.13  intersect([1,2,3,4,5], [4,5,6,7,8]) = [4, 5]
+3.14  difference([1,2,3,4,5], [4,5,6,7,8]) = [1, 2, 3]
+3.15  symmetric_difference([1,2,3,4,5], [4,5,6,7,8]) = [1, 2, 3, 6, 7, 8]
+3.16  map("int", ["1","2","3"]) = [1, 2, 3]
+3.17  map(attribute="name") = ['a', 'b']
+3.18  select(">", 3) from [1..5] = [4, 5]
+3.19  reject("even", [1,2,3,4,5]) = [1, 3, 5]
+3.20  zip_longest([1,2,3], ["a","b","c"]) = [[1, 'a'], [2, 'b'], [3, 'c']]
+3.22  json_query("[?id > `1`].name") = b,c
+3.23  shuffle([1,2,3,4,5]) = [4, 5, 2, 1, 3]
+3.24  batch([1,2,3,4,5,6,7], 3) = [1, 2, 3, 4, 5, [6, 7]]
+3.25  list_a[::2] (every 2nd) = [3, 4, 5, 2]
+
+─── SECTION 4: Dicts ───
+4.02  dict_a["name"] = Alice
+4.03  dict_d["nested"]["deep"]["key"] = secret
+4.04  keys() = ['name', 'age', 'city']
+4.05  values() = ['Alice', 30, 'Brussels']
+4.06  items() = [('name', 'Alice'), ('age', 30), ('city', 'Brussels')]
+4.07  combine(dict_a, dict_b) = {'name': 'Alice', 'age': 31, 'city': 'Brussels', 'role': 'Engineer', 'salary': 75000}
+4.08  combine(recursive=true) = {'a': {'x': 1, 'y': 2}}
+4.09  dict2items({"a":1, "b":2}) = [{'key': 'a', 'value': 1}, {'key': 'b', 'value': 2}]
+4.10  items2dict([{key:"name",value:"Bob"},...]) = {'name': 'Bob', 'age': 25}
+4.11  map(attribute="val") from dict_c.items = ['x', 'y']
+4.12  dict_e.get("missing", "fallback") = {}
+4.13  |dict| len(dict_a) = 3
+4.14  "name" in dict_a = True, "missing" in dict_a = False
+4.15  omit "age" from dict_a = {'name': 'Alice', 'city': 'Brussels'}
+4.16  dict_a keys (sorted) = ['age', 'city', 'name']
+4.17  subset keys ["name","city"] vals = ['Alice', 'Brussels']
+4.18  reject "age" = {'name': 'Alice', 'city': 'Brussels'}
+4.19  to_json(dict_a) = {"name": "Alice", "age": 30, "city": "Brussels"}
+4.20  to_yaml(dict_a) = {age: 30, city: Brussels, name: Alice}
+
+4.22  filter items by id=2 then extract val = y
+4.23  dictsort(dict_a) = [('age', 30), ('city', 'Brussels'), ('name', 'Alice')]
+4.24  dict2items values from dict_a = ['Alice', 30, 'Brussels']
+4.25  combine with list_merge=append = {'items': [1, 2]}
