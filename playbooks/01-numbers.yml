@@ -1,0 +1,186 @@
+---
+# ═══════════════════════════════════════════════════════════════
+#  SECTION 1: NUMBERS  (25 examples)
+# ═══════════════════════════════════════════════════════════════
+#
+# Expected output (random values vary each run):
+#
+#   ─── SECTION 1: Numbers ───
+#   1.02  42 + 7 = 49                          # addition
+#   1.03  42 - 7 = 35                          # subtraction
+#   1.04  42 * 7 = 294                         # multiplication
+#   1.05  42 / 7 = 6.0                         # float division
+#   1.06  42 // 7 = 6                          # integer division
+#   1.07  42 % 5 = 2                           # modulo
+#   1.08  7 ** 3 = 343                         # power / exponent
+#   1.09  abs(-8) = 8                          # absolute value
+#   1.10  round(3.14) = 3.0                    # round to int
+#   1.11  round(3.14, 1) = 3.1                 # round to 1 decimal
+#   1.12  round(3.14, 0, "ceil") = 4.0         # round up
+#   1.13  round(3.14, 0, "floor") = 3.0        # round down
+#   1.14  3.14 | int = 3                       # truncate
+#   1.15  random(50, 100) = ??                  # random (varies)
+#   1.16  min([42, 7, 3, -8, 100]) = -8       # minimum
+#   1.17  max([42, 7, 3, -8, 100]) = 100      # maximum
+#   1.18  sum([42, 7, 3, -8, 100]) = 144      # sum
+#   1.19  product of 2*3*5 = 30                # product via loop
+#   1.20  255 in hex (via format) = ff          # hex format
+#   1.21  42 > 7 ? yes : no = yes              # ternary
+#   1.22  42 is divisible by 7 = True          # divisibleby test
+#   1.23  42 is even = True, 7 is odd = True   # even/odd test
+#   1.24  -8 < 0 = True, 42 > 0 = True         # comparison
+#   1.25  hex 0xff = 255 via int filter: 255   # int from hex
+# ═══════════════════════════════════════════════════════════════
+
+- name: "01 — Numbers: arithmetic, rounding, comparisons"
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ../vars/numbers.yml
+  vars:
+    output_lines: []
+
+  tasks:
+    - name: "Initialize output"
+      ansible.builtin.set_fact:
+        output_lines: ["", "─── SECTION 1: Numbers ───"]
+
+    # 1.02  addition
+    - name: "1.02  Addition"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.02  42 + 7 = ' ~ (num_a + num_b)] }}"
+
+    # 1.03  subtraction
+    - name: "1.03  Subtraction"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.03  42 - 7 = ' ~ (num_a - num_b)] }}"
+
+    # 1.04  multiplication
+    - name: "1.04  Multiplication"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.04  42 * 7 = ' ~ (num_a * num_b)] }}"
+
+    # 1.05  float division
+    - name: "1.05  Division (float)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.05  42 / 7 = ' ~ (num_a / num_b)] }}"
+
+    # 1.06  integer division
+    - name: "1.06  Integer division"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.06  42 // 7 = ' ~ (num_a // num_b)] }}"
+
+    # 1.07  modulo
+    - name: "1.07  Modulo"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.07  42 % 5 = ' ~ (num_a % 5)] }}"
+
+    # 1.08  power
+    - name: "1.08  Power / exponent"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.08  7 ** 3 = ' ~ (7 ** 3)] }}"
+
+    # 1.09  absolute value
+    - name: "1.09  Absolute value"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.09  abs(-8) = ' ~ (num_d | abs)] }}"
+
+    # 1.10  round to integer
+    - name: "1.10  Round to integer"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.10  round(3.14) = ' ~ (num_c | round) ] }}"
+
+    # 1.11  round to 1 decimal
+    - name: "1.11  Round to 1 decimal"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.11  round(3.14, 1) = ' ~ (num_c | round(1)) ] }}"
+
+    # 1.12  ceil rounding
+    - name: "1.12  Round ceil"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.12  round(3.14, 0, \"ceil\") = ' ~ (num_c | round(0, \"ceil\")) ] }}"
+
+    # 1.13  floor rounding
+    - name: "1.13  Round floor"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.13  round(3.14, 0, \"floor\") = ' ~ (num_c | round(0, \"floor\")) ] }}"
+
+    # 1.14  truncate / int
+    - name: "1.14  Integer (truncate)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.14  3.14 | int = ' ~ (num_c | int) ] }}"
+
+    # 1.15  random in range [50, 100)
+    - name: "1.15  Random integer range"
+      ansible.builtin.set_fact:
+        rand_num: "{{ 100 | random(start=50) }}"
+    - name: "1.15b Random result"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.15  random(50, 100) = ' ~ rand_num] }}"
+
+    # 1.16  minimum
+    - name: "1.16  Min of list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.16  min([42, 7, 3, -8, 100]) = ' ~ ([42, 7, 3, -8, 100] | min)] }}"
+
+    # 1.17  maximum
+    - name: "1.17  Max of list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.17  max([42, 7, 3, -8, 100]) = ' ~ ([42, 7, 3, -8, 100] | max)] }}"
+
+    # 1.18  sum
+    - name: "1.18  Sum of list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.18  sum([42, 7, 3, -8, 100]) = ' ~ ([42, 7, 3, -8, 100] | sum)] }}"
+
+    # 1.19  product via loop (2*3*5)
+    - name: "1.19  Product via loop"
+      ansible.builtin.set_fact:
+        prod_val: 1
+    - name: "1.19b"
+      ansible.builtin.set_fact:
+        prod_val: "{{ prod_val * item }}"
+      loop: [2, 3, 5]
+    - name: "1.19c"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.19  product of 2*3*5 = ' ~ prod_val] }}"
+
+    # 1.20  hex via printf-style format
+    - name: "1.20  Number as hex string"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.20  255 in hex (via format) = ' ~ ('%x' % 255) ] }}"
+
+    # 1.21  ternary conditional
+    - name: "1.21  Ternary / conditional"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.21  42 > 7 ? yes : no = ' ~ ((num_a > num_b) | ternary('yes', 'no')) ] }}"
+
+    # 1.22  divisibleby test
+    - name: "1.22  Divisibility test"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.22  42 is divisible by 7 = ' ~ (num_a is divisibleby(num_b)) ] }}"
+
+    # 1.23  even and odd tests
+    - name: "1.23  Odd / even"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.23  42 is even = ' ~ (num_a is even) ~ ', 7 is odd = ' ~ (num_b is odd) ] }}"
+
+    # 1.24  greater/less than comparison
+    - name: "1.24  Negative test"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.24  -8 is less than 0 = ' ~ (num_d < 0) ~ ', 42 is greater than 0 = ' ~ (num_a > 0) ] }}"
+
+    # 1.25  int filter with base=16
+    - name: "1.25  Int from hex"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.25  hex 0xff = 255 via int filter: ' ~ (\"0xff\" | int(base=16)) ] }}"
+
+    # ── Write section output ──
+    - name: "Write section 1 output"
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/../output-01.txt"
+        content: |
+          {% for line in output_lines -%}
+          {{ line }}
+          {% endfor %}
