@@ -1,0 +1,176 @@
+---
+# ═══════════════════════════════════════════════════════════════
+#  SECTION 3: LISTS  (25 examples)
+# ═══════════════════════════════════════════════════════════════
+#
+# Expected output:
+#
+#   ─── SECTION 3: Lists ───
+#   3.02  first([3,1,4,1,5]) = 3
+#   3.03  last([3,1,4,1,5,9,2,6]) = 6
+#   3.04  length([3,1,4,1,5,9,2,6]) = 8
+#   3.05  sort([3,1,4,1,5,9,2,6]) = [1, 1, 2, 3, 4, 5, 6, 9]
+#   3.06  sort(reverse=true) = [9, 6, 5, 4, 3, 2, 1, 1]
+#   3.07  reverse([1,2,3]) = [3, 2, 1]
+#   3.08  [3,1,4,1,5,9][:3] = [3, 1, 4], [3:] = [1, 5, 9, 2, 6]
+#   3.09  unique([1,2,2,3,3,3,4]) = [1, 2, 3, 4]
+#   3.10  flatten([[1,2],[3,4],[5]]) = [1, 2, 3, 4, 5]
+#   3.11  flatten(levels=1) = [1, 2, 3, 4, 5]
+#   3.12  union([1..5], [4..8]) = [1, 2, 3, 4, 5, 6, 7, 8]
+#   3.13  intersect([1..5], [4..8]) = [4, 5]
+#   3.14  difference([1..5], [4..8]) = [1, 2, 3]
+#   3.15  symmetric_difference = [1, 2, 3, 6, 7, 8]
+#   3.16  map("int", ["1","2","3"]) = [1, 2, 3]
+#   3.17  map(attribute="name") = ['a', 'b']
+#   3.18  select(">", 3) from [1..5] = [4, 5]
+#   3.19  reject("even", [1..5]) = [1, 3, 5]
+#   3.20  zip_longest([1,2,3], ["a","b","c"]) = [[1,'a'],[2,'b'],[3,'c']]
+#   3.22  json_query("[?id > `1`].name") = b,c
+#   3.23  shuffle([1..5]) = ?? (varies)
+#   3.24  batch([1..7], 3) = [[1,2,3],[4,5],[6,7]]
+#   3.25  list_a[::2] (every 2nd) = [3, 4, 5, 2]
+# ═══════════════════════════════════════════════════════════════
+
+- name: "03 — Lists: sort, filter, flatten, set operations"
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ../vars/lists.yml
+  vars:
+    output_lines: []
+
+  tasks:
+    - name: "Initialize output"
+      ansible.builtin.set_fact:
+        output_lines: ["", "─── SECTION 3: Lists ───"]
+
+    # 3.02  first element
+    - name: "3.02  First element"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.02  first([3,1,4,1,5]) = ' ~ (list_a | first) ] }}"
+
+    # 3.03  last element
+    - name: "3.03  Last element"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.03  last([3,1,4,1,5,9,2,6]) = ' ~ (list_a | last) ] }}"
+
+    # 3.04  length
+    - name: "3.04  Length"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.04  length([3,1,4,1,5,9,2,6]) = ' ~ (list_a | length) ] }}"
+
+    # 3.05  sort ascending
+    - name: "3.05  Sort ascending"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.05  sort([3,1,4,1,5,9,2,6]) = ' ~ (list_a | sort) ] }}"
+
+    # 3.06  sort descending
+    - name: "3.06  Sort descending"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.06  sort(reverse=true) = ' ~ (list_a | sort(reverse=true)) ] }}"
+
+    # 3.07  reverse list
+    - name: "3.07  Reverse list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.07  reverse([1,2,3]) = ' ~ ([1,2,3] | reverse | list) ] }}"
+
+    # 3.08  slice
+    - name: "3.08  Slice list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.08  [3,1,4,1,5,9][:3] = ' ~ (list_a[:3] | list) ~ ', [3:] = ' ~ (list_a[3:] | list) ] }}"
+
+    # 3.09  unique
+    - name: "3.09  Unique elements"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.09  unique([1,2,2,3,3,3,4]) = ' ~ (list_g | unique) ] }}"
+
+    # 3.10  flatten deep
+    - name: "3.10  Flatten nested list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.10  flatten([[1,2],[3,4],[5]]) = ' ~ (list_e | flatten) ] }}"
+
+    # 3.11  flatten level 1 only
+    - name: "3.11  Flatten level 1 only"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.11  flatten(levels=1) = ' ~ (list_e | flatten(levels=1)) ] }}"
+
+    # 3.12  union (unique merge)
+    - name: "3.12  Union (unique merge)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.12  union([1,2,3,4,5], [4,5,6,7,8]) = ' ~ (list_c | union(list_d)) ] }}"
+
+    # 3.13  intersection
+    - name: "3.13  Intersection"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.13  intersect([1,2,3,4,5], [4,5,6,7,8]) = ' ~ (list_c | intersect(list_d)) ] }}"
+
+    # 3.14  difference
+    - name: "3.14  Difference"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.14  difference([1,2,3,4,5], [4,5,6,7,8]) = ' ~ (list_c | difference(list_d)) ] }}"
+
+    # 3.15  symmetric difference
+    - name: "3.15  Symmetric difference"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.15  symmetric_difference([1,2,3,4,5], [4,5,6,7,8]) = ' ~ (list_c | symmetric_difference(list_d)) ] }}"
+
+    # 3.16  map: cast strings to int
+    - name: "3.16  Map: apply int to strings"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.16  map(\"int\", [\"1\",\"2\",\"3\"]) = ' ~ ([\"1\",\"2\",\"3\"] | map(\"int\") | list) ] }}"
+
+    # 3.17  map: extract attribute from dict list
+    - name: "3.17  Map: extract attribute"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.17  map(attribute=\"name\") = ' ~ ([{'name':'a'},{'name':'b'}] | map(attribute='name') | list) ] }}"
+
+    # 3.18  select: filter > 3
+    - name: "3.18  Select: filter > 3"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.18  select(\">\", 3) from [1..5] = ' ~ (list_c | select(\">\", 3) | list) ] }}"
+
+    # 3.19  reject: filter out evens
+    - name: "3.19  Reject: filter out even"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.19  reject(\"even\", [1,2,3,4,5]) = ' ~ (list_c | reject(\"even\") | list) ] }}"
+
+    # 3.20  zip_longest: combine two lists element-wise
+    - name: "3.20  Zip via Ansible zip_longest"
+      ansible.builtin.set_fact:
+        zipped: "{{ [1,2,3] | zip_longest(['a','b','c']) | list }}"
+    - name: "3.20b"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.20  zip_longest([1,2,3], [\"a\",\"b\",\"c\"]) = ' ~ zipped ] }}"
+
+    # 3.22  JSON query on list of dicts
+    - name: "3.22  JSON query on list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.22  json_query(\"[?id > `1`].name\") = ' ~ ([{'id':1,'name':'a'},{'id':2,'name':'b'},{'id':3,'name':'c'}] | json_query(\"[?id > `1`].name\") | join(',')) ] }}"
+
+    # 3.23  shuffle (random)
+    - name: "3.23  Shuffle (randomize)"
+      ansible.builtin.set_fact:
+        shuffled: "{{ list_c | shuffle }}"
+    - name: "3.23b Shuffle result"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.23  shuffle([1,2,3,4,5]) = ' ~ shuffled] }}"
+
+    # 3.24  batch (chunk into groups)
+    - name: "3.24  Batch (chunk into N-sized groups)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.24  batch([1,2,3,4,5,6,7], 3) = ' ~ (list_c + [6,7] | batch(3) ) ] }}"
+
+    # 3.25  slice with step
+    - name: "3.25  Slice_util: compare with slice"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.25  list_a[::2] (every 2nd) = ' ~ (list_a[::2] | list) ] }}"
+
+    # ── Write section output ──
+    - name: "Write section 3 output"
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/../output-03.txt"
+        content: |
+          {% for line in output_lines -%}
+          {{ line }}
+          {% endfor %}
