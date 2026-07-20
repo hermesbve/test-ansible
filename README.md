@@ -1,1 +1,40 @@
-IyB0ZXN0LWFuc2libGUKCkFuc2libGUgbG9jYWwgZGVtbyAtLSBwdXJlIGRhdGEgbWFuaXB1bGF0aW9uIChubyBTU0gsIG5vIHJlbW90ZSBob3N0cykuCgpEZW1vbnN0cmF0ZXMgKjI1KyBleGFtcGxlcyBlYWNoKiBvZjoKLSAqKk51bWJlcnMqKiAtLSBhcml0aG1ldGljLCByb3VuZGluZywgbWluL21heC9zdW0sIHJhbmRvbSwgZGl2aXNpYmlsaXR5LCBvZGQvZXZlbiwgdGVybmFyeSwgbG9nCi0gKipTdHJpbmdzKiogLS0gY2FzZSBjb252ZXJzaW9uLCB0cmltLCBzcGxpdC9qb2luLCByZWdleCwgYmFzZTY0LCBVUkwgZW5jb2RlLCBzdWJzdHJpbmcsIHBhZGRpbmcKLSAqKkxpc3RzKiogLS0gc29ydCwgcmV2ZXJzZSwgdW5pcXVlLCBmbGF0dGVuLCB1bmlvbi9pbnRlcnNlY3QvZGlmZmVyZW5jZSwgemlwLCBiYXRjaCwgc2h1ZmZsZSwgSlNPTiBxdWVyeQotICoqRGljdHMqKiAtLSBrZXkgYWNjZXNzLCBtZXJnZSwgZGljdDJpdGVtcy9pdGVtczJkaWN0LCBzdWJzZXQgZXh0cmFjdCwgSlNPTi9ZQU1MIHNlcmlhbGl6YXRpb24sIGRpY3Rzb3J0CgpBbGwgdmlhIEFuc2libGUncyBKaW5qYTIgZmlsdGVycyBhbmQgYnVpbHQtaW4gbW9kdWxlcyAtLSBgY29ubmVjdGlvbjogbG9jYWxgLCBubyBpbnZlbnRvcnkgbmVlZGVkLgoKIyMgVHJpZ2dlcgoKLSAqKk9uIHB1c2gqKiB0byBgbWFpbmAKLSAqKk1hbnVhbCoqIC0tIGdvIHRvICoqQWN0aW9ucyDigJQgQW5zaWJsZSBEZW1vIOKAlCBSdW4gd29ya2Zsb3cqKgoKIyMgT3V0cHV0CgpFYWNoIHJ1biBwcm9kdWNlcyBbYGRlYnVnLmRpY3QudHh0YF0oLi9kZWJ1Zy5kaWN0LnR4dCkgY29tbWl0dGVkIGJhY2sgdG8gdGhlIHJlcG8uCg==
+# test-ansible
+
+Ansible local demo — pure data manipulation (no SSH, no remote hosts).
+
+## Structure
+
+```
+vars/               # Per-section variable files
+  numbers.yml
+  strings.yml
+  lists.yml
+  dicts.yml
+
+playbooks/          # Sub-playbooks — each independently runnable
+  01-numbers.yml    # 25 examples: arithmetic, rounding, comparisons
+  02-strings.yml    # 25 examples: case, split/join, regex, base64
+  03-lists.yml      # 25 examples: sort, filter, flatten, set ops
+  04-dicts.yml      # 25 examples: access, merge, transform, serialize
+  main.yml          # Orchestrator — runs all 4, combines output
+
+.github/workflows/ansible-demo.yml
+output.lastrun.txt  # Auto-generated on each run
+```
+
+Each sub-playbook shows its expected output in the header comments.
+
+## Run
+
+```bash
+# A single section:
+ansible-playbook playbooks/01-numbers.yml
+
+# All sections (produces output.lastrun.txt):
+ansible-playbook playbooks/main.yml
+```
+
+## Trigger
+
+- **On push** to `main`
+- **Manual** — **Actions → Ansible Demo → Run workflow`

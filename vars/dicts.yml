@@ -1,0 +1,7 @@
+# Variables for Dicts section
+dict_a: {"name": "Alice", "age": 30, "city": "Brussels"}
+dict_b: {"role": "Engineer", "age": 31, "salary": 75000}
+dict_c: {"items": [{"id": 1, "val": "x"}, {"id": 2, "val": "y"}]}
+dict_d: {"nested": {"deep": {"key": "secret"}}}
+dict_e: {}
+kv_pairs: [{"key": "name", "value": "Bob"}, {"key": "age", "value": 25}]

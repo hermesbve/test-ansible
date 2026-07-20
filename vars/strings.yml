@@ -1,0 +1,5 @@
+# Variables for Strings section
+str_hello: "Hello World"
+str_case: "  Ansible RockS!  "
+str_parts: "apple,banana,cherry,date"
+str_sentence: "the quick brown fox jumps"
