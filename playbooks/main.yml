@@ -26,4 +26,5 @@
     - name: "Concatenate all section files into output.lastrun.txt"
       ansible.builtin.shell: |
         cat {{ playbook_dir }}/../output-01.txt {{ playbook_dir }}/../output-02.txt {{ playbook_dir }}/../output-03.txt {{ playbook_dir }}/../output-04.txt > {{ playbook_dir }}/../output.lastrun.txt
+        cp {{ playbook_dir }}/../output.lastrun.txt {{ playbook_dir }}/../debug.dict.txt
         rm -f {{ playbook_dir }}/../output-01.txt {{ playbook_dir }}/../output-02.txt {{ playbook_dir }}/../output-03.txt {{ playbook_dir }}/../output-04.txt
