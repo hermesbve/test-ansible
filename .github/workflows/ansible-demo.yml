@@ -1,26 +1,27 @@
-name: Ansible Demo                                                                                                                                                  
-  on:                                                                                                                                                                 
-    push:                                                                                                                                                             
-      branches: [main]                                                                                                                                                
-    workflow_dispatch:                                                                                                                                                
-jobs:                                                                                                                                                               
-  ansible-demo:                                                                                                                                                     
-    runs-on: ubuntu-latest                                                                                                                                          
-      permissions:                                                                                                                                                    
-        contents: write                                                                                                                                               
-          steps:                                                                                                                                                          
-            - name: Checkout repo                                                                                                                                         
-              uses: actions/checkout@v4                                                                                                                                   
-            - name: Install Ansible and dependencies                                                                                                                      
-              run: |                                                                                                                                                      
-                pip install ansible jmespath --quiet                                                                                                                      
-            - name: Run Ansible playbook                                                                                                                                  
-              run: |                                                                                                                                                      
-                ansible-playbook playbooks/main.yml -v                                                                                                                    
-            - name: Commit output back to repo                                                                                                                            
-              run: |                                                                                                                                                      
-                git config user.name "Ansible Demo Bot"                                                                                                                   
-                git config user.email "bot@hermesbve.github.io"                                                                                                           
-                git add debug.dict.txt                                                                                                                                    
-                git diff --cached --quiet || git commit -m "Update debug.dict.txt from Ansible demo run"                                                                  
-                git push  
+─ yaml  
+name: Ansible Demo  
+on:     
+  push: 
+    branches: [main]
+  workflow_dispatch:
+jobs:   
+  ansible-demo:     
+    runs-on: ubuntu-latest
+    permissions:    
+contents: write     
+    steps:    
+      - name: Checkout repo     
+        uses: actions/checkout@v4     
+      - name: Install Ansible   
+        run: pip install ansible jmespath --quiet 
+      - name: Run Ansible playbook    
+        run: ansible-playbook playbooks/main.yml -v     
+      - name: Commit output back to repo    
+        run: |
+          git config user.name "Ansible Demo Bot" 
+          git config user.email "bot@hermesbve.github.io"     
+          git add debug.dict.txt
+          git diff --cached --quiet || git commit -m "Update debug.dict.txt"    
+          git push  
+          
+          
