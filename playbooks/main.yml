@@ -1,0 +1,501 @@
+---
+- name: Ansible Local Demo — numbers, strings, lists, dicts
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    output_lines: []
+
+  tasks:
+    # ── Bootstrap: helper to accumulate output ──────────────────────
+    - name: "Initialize output"
+      ansible.builtin.set_fact:
+        output_lines: []
+
+    # ─────────────────────────────────────────────────────────────────
+    #  NUMBERS  (25+ examples)
+    # ─────────────────────────────────────────────────────────────────
+    - name: "─── SECTION 1: Numbers ───"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['', '─── SECTION 1: Numbers ───'] }}"
+
+    - name: "1.01  Basic arithmetic"
+      ansible.builtin.set_fact:
+        num_a: 42
+        num_b: 7
+        num_c: 3.14
+        num_d: -8
+        num_e: 100
+
+    - name: "1.02  Addition"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.02  42 + 7 = ' ~ (num_a + num_b)] }}"
+
+    - name: "1.03  Subtraction"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.03  42 - 7 = ' ~ (num_a - num_b)] }}"
+
+    - name: "1.04  Multiplication"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.04  42 * 7 = ' ~ (num_a * num_b)] }}"
+
+    - name: "1.05  Division (float)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.05  42 / 7 = ' ~ (num_a / num_b)] }}"
+
+    - name: "1.06  Integer division"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.06  42 // 7 = ' ~ (num_a // num_b)] }}"
+
+    - name: "1.07  Modulo"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.07  42 % 5 = ' ~ (num_a % 5)] }}"
+
+    - name: "1.08  Power / exponent"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.08  7 ** 3 = ' ~ (7 ** 3)] }}"
+
+    - name: "1.09  Absolute value"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.09  abs(-8) = ' ~ (num_d | abs)] }}"
+
+    - name: "1.10  Round to integer"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.10  round(3.14) = ' ~ (num_c | round) ] }}"
+
+    - name: "1.11  Round to 1 decimal"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.11  round(3.14, 1) = ' ~ (num_c | round(1)) ] }}"
+
+    - name: "1.12  Round ceil"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.12  round(3.14, 0, \"ceil\") = ' ~ (num_c | round(0, \"ceil\")) ] }}"
+
+    - name: "1.13  Round floor"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.13  round(3.14, 0, \"floor\") = ' ~ (num_c | round(0, \"floor\")) ] }}"
+
+    - name: "1.14  Integer (truncate)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.14  3.14 | int = ' ~ (num_c | int) ] }}"
+
+    - name: "1.15  Random integer range"
+      ansible.builtin.set_fact:
+        rand_num: "{{ 100 | random(start=50) }}"
+    - name: "1.15b Random result"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.15  random(50, 100) = ' ~ rand_num] }}"
+
+    - name: "1.16  Min of list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.16  min([42, 7, 3, -8, 100]) = ' ~ ([42, 7, 3, -8, 100] | min)] }}"
+
+    - name: "1.17  Max of list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.17  max([42, 7, 3, -8, 100]) = ' ~ ([42, 7, 3, -8, 100] | max)] }}"
+
+    - name: "1.18  Sum of list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.18  sum([42, 7, 3, -8, 100]) = ' ~ ([42, 7, 3, -8, 100] | sum)] }}"
+
+    - name: "1.19  Product via loop"
+      ansible.builtin.set_fact:
+        prod_val: 1
+    - name: "1.19b"
+      ansible.builtin.set_fact:
+        prod_val: "{{ prod_val * item }}"
+      loop: [2, 3, 5]
+    - name: "1.19c"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.19  product of 2*3*5 = ' ~ prod_val] }}"
+
+    - name: "1.20  Number as hex string"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.20  255 in hex (via format) = ' ~ ('%x' % 255) ] }}"
+
+    - name: "1.21  Ternary / conditional"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.21  42 > 7 ? yes : no = ' ~ ((num_a > num_b) | ternary('yes', 'no')) ] }}"
+
+    - name: "1.22  Divisibility test"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.22  42 is divisible by 7 = ' ~ (num_a is divisibleby(num_b)) ] }}"
+
+    - name: "1.23  Odd / even"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.23  42 is even = ' ~ (num_a is even) ~ ', 7 is odd = ' ~ (num_b is odd) ] }}"
+
+    - name: "1.24  Negative test"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.24  -8 is less than 0 = ' ~ (num_d < 0) ~ ', 42 is greater than 0 = ' ~ (num_a > 0) ] }}"
+
+    - name: "1.25  Int from hex"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['1.25  hex 0xff = 255 via int filter: ' ~ (\"0xff\" | int(base=16)) ] }}"
+
+    # ─────────────────────────────────────────────────────────────────
+    #  STRINGS  (25+ examples)
+    # ─────────────────────────────────────────────────────────────────
+    - name: "─── SECTION 2: Strings ───"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['', '─── SECTION 2: Strings ───'] }}"
+
+    - name: "2.01  Sample strings"
+      ansible.builtin.set_fact:
+        str_hello: "Hello World"
+        str_case: "  Ansible RockS!  "
+        str_parts: "apple,banana,cherry,date"
+        str_sentence: "the quick brown fox jumps"
+
+    - name: "2.02  Lowercase"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.02  lower(\"Ansible RockS!\") = ' ~ (str_case | trim | lower) ] }}"
+
+    - name: "2.03  Uppercase"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.03  upper(\"Hello World\") = ' ~ (str_hello | upper) ] }}"
+
+    - name: "2.04  Capitalize"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.04  capitalize(\"hello world\") = ' ~ (str_hello | lower | capitalize) ] }}"
+
+    - name: "2.05  Title case"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.05  title(\"the quick brown fox\") = ' ~ (str_sentence | title) ] }}"
+
+    - name: "2.06  Trim whitespace"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.06  trim(\"  Ansible RockS!  \") = \"' ~ (str_case | trim) ~ '\"'] }}"
+
+    - name: "2.07  Length of string"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.07  length(\"Hello World\") = ' ~ (str_hello | length) ] }}"
+
+    - name: "2.08  Substring / slice"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.08  \"Hello World\"[0:5] = \"' ~ str_hello[:5] ~ '\" , [6:] = \"' ~ str_hello[6:] ~ '\"'] }}"
+
+    - name: "2.09  Contains (search)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.09  \"Hello\" in \"Hello World\" = ' ~ ('Hello' in str_hello) ] }}"
+
+    - name: "2.10  Replace"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.10  replace(\"Hello World\", \"World\", \"Ansible\") = ' ~ (str_hello | replace('World', 'Ansible')) ] }}"
+
+    - name: "2.11  Regex replace"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.11  regex_replace(\"Hello World\", \"[aeiou]\", \"_\") = ' ~ (str_hello | regex_replace('[aeiou]', '_')) ] }}"
+
+    - name: "2.12  Regex search (find)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.12  regex_search(\"Hello World\", \"W\\\\w+\") = ' ~ (str_hello | regex_search('W\\w+')) ] }}"
+
+    - name: "2.13  Regex findall"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.13  regex_findall(\"the quick brown fox\", \"\\\\w+\") = ' ~ (str_sentence | regex_findall('\\w+') | join(', ')) ] }}"
+
+    - name: "2.14  Split string"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.14  split(\"apple,banana,cherry,date\", \",\") = ' ~ (str_parts | split(',')) ] }}"
+
+    - name: "2.15  Join list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.15  join([\"a\",\"b\",\"c\"], \"|\") = ' ~ ([\"a\", \"b\", \"c\"] | join('|')) ] }}"
+
+    - name: "2.16  Reverse list (chars)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.16  reverse list of chars \"Hello\" = ' ~ (\"Hello\" | list | reverse | join('')) ] }}"
+
+    - name: "2.17  Base64 encode"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.17  b64encode(\"Hello\") = ' ~ (\"Hello\" | b64encode) ] }}"
+
+    - name: "2.18  Base64 decode"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.18  b64decode(\"SGVsbG8=\") = ' ~ (\"SGVsbG8=\" | b64decode) ] }}"
+
+    - name: "2.19  URL encode"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.19  urlencode(\"hello world\") = ' ~ (\"hello world\" | urlencode) ] }}"
+
+    - name: "2.20  String to list of chars"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.20  list(\"ABC\") = ' ~ ([\"ABC\"] | list) ] }}"
+
+    - name: "2.21  Starts / ends with"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.21  starts with \"Hel\" = ' ~ (str_hello.startswith('Hel')) ~ ', ends with \"rld\" = ' ~ (str_hello.endswith('rld')) ] }}"
+
+    - name: "2.22  Word count"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.22  wordcount(\"the quick brown fox jumps\") = ' ~ (str_sentence.split() | length) ] }}"
+
+    - name: "2.23  Center / pad"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.23  center(\"Hi\", 9) = \"' ~ (\"Hi\" | center(9)) ~ '\"'] }}"
+
+    - name: "2.24  Format string (printf-style)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.24  format(\"%s=%d\") = ' ~ (\"%s=%d\" % (\"answer\", 42)) ] }}"
+
+    - name: "2.25  Indent multiline"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['2.25  indent(\"line1\\\\nline2\", 4) = ' ~ (\"line1\\nline2\" | indent(4)) ] }}"
+
+    # ─────────────────────────────────────────────────────────────────
+    #  LISTS  (25+ examples)
+    # ─────────────────────────────────────────────────────────────────
+    - name: "─── SECTION 3: Lists ───"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['', '─── SECTION 3: Lists ───'] }}"
+
+    - name: "3.01  Sample lists"
+      ansible.builtin.set_fact:
+        list_a: [3, 1, 4, 1, 5, 9, 2, 6]
+        list_b: ["alpha", "beta", "gamma"]
+        list_c: [1, 2, 3, 4, 5]
+        list_d: [4, 5, 6, 7, 8]
+        list_e: [[1, 2], [3, 4], [5]]
+        list_f: ["  apple  ", "Banana", "cherry"]
+        list_g: [1, 2, 2, 3, 3, 3, 4]
+
+    - name: "3.02  First element"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.02  first([3,1,4,1,5]) = ' ~ (list_a | first) ] }}"
+
+    - name: "3.03  Last element"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.03  last([3,1,4,1,5,9,2,6]) = ' ~ (list_a | last) ] }}"
+
+    - name: "3.04  Length"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.04  length([3,1,4,1,5,9,2,6]) = ' ~ (list_a | length) ] }}"
+
+    - name: "3.05  Sort ascending"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.05  sort([3,1,4,1,5,9,2,6]) = ' ~ (list_a | sort) ] }}"
+
+    - name: "3.06  Sort descending"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.06  sort(reverse=true) = ' ~ (list_a | sort(reverse=true)) ] }}"
+
+    - name: "3.07  Reverse list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.07  reverse([1,2,3]) = ' ~ ([1,2,3] | reverse | list) ] }}"
+
+    - name: "3.08  Slice list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.08  [3,1,4,1,5,9][:3] = ' ~ (list_a[:3] | list) ~ ', [3:] = ' ~ (list_a[3:] | list) ] }}"
+
+    - name: "3.09  Unique elements"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.09  unique([1,2,2,3,3,3,4]) = ' ~ (list_g | unique) ] }}"
+
+    - name: "3.10  Flatten nested list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.10  flatten([[1,2],[3,4],[5]]) = ' ~ (list_e | flatten) ] }}"
+
+    - name: "3.11  Flatten level 1 only"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.11  flatten(levels=1) = ' ~ (list_e | flatten(levels=1)) ] }}"
+
+    - name: "3.12  Union (unique merge)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.12  union([1,2,3,4,5], [4,5,6,7,8]) = ' ~ (list_c | union(list_d)) ] }}"
+
+    - name: "3.13  Intersection"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.13  intersect([1,2,3,4,5], [4,5,6,7,8]) = ' ~ (list_c | intersect(list_d)) ] }}"
+
+    - name: "3.14  Difference"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.14  difference([1,2,3,4,5], [4,5,6,7,8]) = ' ~ (list_c | difference(list_d)) ] }}"
+
+    - name: "3.15  Symmetric difference"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.15  symmetric_difference([1,2,3,4,5], [4,5,6,7,8]) = ' ~ (list_c | symmetric_difference(list_d)) ] }}"
+
+    - name: "3.16  Map: apply int to strings"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.16  map(\"int\", [\"1\",\"2\",\"3\"]) = ' ~ ([\"1\",\"2\",\"3\"] | map(\"int\") | list) ] }}"
+
+    - name: "3.17  Map: extract attribute"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.17  map(attribute=\"name\") = ' ~ ([{'name':'a'},{'name':'b'}] | map(attribute='name') | list) ] }}"
+
+    - name: "3.18  Select: filter > 3"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.18  select(\">\", 3) from [1..5] = ' ~ (list_c | select(\">\", 3) | list) ] }}"
+
+    - name: "3.19  Reject: filter out even"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.19  reject(\"even\", [1,2,3,4,5]) = ' ~ (list_c | reject(\"even\") | list) ] }}"
+
+    - name: "3.20  Zip via Ansible zip_longest"
+      ansible.builtin.set_fact:
+        zipped: "{{ [1,2,3] | zip_longest(['a','b','c']) | list }}"
+    - name: "3.20b"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.20  zip_longest([1,2,3], [\"a\",\"b\",\"c\"]) = ' ~ zipped ] }}"
+
+    - name: "3.21  Subelements"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.21  subelements example: count=2 items' ] }}"
+      when: false  # subelements needs special data structure, skip
+
+    - name: "3.22  JSON query on list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.22  json_query(\"[?id > `1`].name\") = ' ~ ([{'id':1,'name':'a'},{'id':2,'name':'b'},{'id':3,'name':'c'}] | json_query(\"[?id > `1`].name\") | join(',')) ] }}"
+
+    - name: "3.23  Shuffle (randomize)"
+      ansible.builtin.set_fact:
+        shuffled: "{{ list_c | shuffle }}"
+    - name: "3.23b Shuffle result"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.23  shuffle([1,2,3,4,5]) = ' ~ shuffled] }}"
+
+    - name: "3.24  Batch (chunk into N-sized groups)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.24  batch([1,2,3,4,5,6,7], 3) = ' ~ (list_c + [6,7] | batch(3) ) ] }}"
+
+    - name: "3.25  Slice_util: compare with slice"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['3.25  list_a[::2] (every 2nd) = ' ~ (list_a[::2] | list) ] }}"
+
+    # ─────────────────────────────────────────────────────────────────
+    #  DICTS  (25+ examples)
+    # ─────────────────────────────────────────────────────────────────
+    - name: "─── SECTION 4: Dicts ───"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['', '─── SECTION 4: Dicts ───'] }}"
+
+    - name: "4.01  Sample dicts"
+      ansible.builtin.set_fact:
+        dict_a: {"name": "Alice", "age": 30, "city": "Brussels"}
+        dict_b: {"role": "Engineer", "age": 31, "salary": 75000}
+        dict_c: {"items": [{"id": 1, "val": "x"}, {"id": 2, "val": "y"}]}
+        dict_d: {"nested": {"deep": {"key": "secret"}}}
+        dict_e: {}
+        kv_pairs: [{"key": "name", "value": "Bob"}, {"key": "age", "value": 25}]
+
+    - name: "4.02  Access key"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.02  dict_a[\"name\"] = ' ~ dict_a.name ] }}"
+
+    - name: "4.03  Access nested key"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.03  dict_d[\"nested\"][\"deep\"][\"key\"] = ' ~ dict_d.nested.deep.key ] }}"
+
+    - name: "4.04  Keys"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.04  keys() = ' ~ (dict_a.keys() | list) ] }}"
+
+    - name: "4.05  Values"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.05  values() = ' ~ (dict_a.values() | list) ] }}"
+
+    - name: "4.06  Items (key-value pairs)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.06  items() = ' ~ (dict_a.items() | list) ] }}"
+
+    - name: "4.07  Combine (merge) two dicts"
+      ansible.builtin.set_fact:
+        combined: "{{ dict_a | combine(dict_b) }}"
+    - name: "4.07b"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.07  combine(dict_a, dict_b) = ' ~ combined ] }}"
+
+    - name: "4.08  Combine with recursive merge"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.08  combine(recursive=true) = ' ~ ({\"a\": {\"x\": 1}} | combine({\"a\": {\"y\": 2}}, recursive=true)) ] }}"
+
+    - name: "4.09  Dict to items list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.09  dict2items({\"a\":1, \"b\":2}) = ' ~ ({\"a\": 1, \"b\": 2} | dict2items) ] }}"
+
+    - name: "4.10  Items list to dict"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.10  items2dict([{key:\"name\",value:\"Bob\"},...]) = ' ~ (kv_pairs | items2dict) ] }}"
+
+    - name: "4.11  Extract field from list of dicts"
+      ansible.builtin.set_fact:
+        dc_items: "{{ dict_c['items'] }}"
+    - name: "4.11c"
+      ansible.builtin.set_fact:
+        extracted: "{{ dc_items | map(attribute='val') | list }}"
+    - name: "4.11d"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.11  map(attribute=\"val\") from dict_c.items = ' ~ extracted ] }}"
+
+    - name: "4.12  Default value"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.12  dict_e.get(\"missing\", \"fallback\") = ' ~ (dict_e | default({\"missing\": \"fallback\"})) ] }}"
+
+    - name: "4.13  Dict length"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.13  |dict| len(dict_a) = ' ~ (dict_a | length) ] }}"
+
+    - name: "4.14  Check if key exists"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.14  \"name\" in dict_a = ' ~ (\"name\" in dict_a) ~ ', \"missing\" in dict_a = ' ~ (\"missing\" in dict_a) ] }}"
+
+    - name: "4.15  Select keys (omit)"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.15  omit \"age\" from dict_a = ' ~ (dict_a | dict2items | rejectattr('key', 'equalto', 'age') | items2dict) ] }}"
+
+    - name: "4.16  Keys as sorted list"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.16  dict_a keys (sorted) = ' ~ (dict_a.keys() | list | sort) ] }}"
+
+    - name: "4.17  Subset by manual filter"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.17  subset keys [\"name\",\"city\"] vals = ' ~ [dict_a.get('name'), dict_a.get('city')] ] }}"
+
+    - name: "4.18  Reject keys"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.18  reject \"age\" = ' ~ (dict_a | dict2items | rejectattr('key', 'equalto', 'age') | items2dict) ] }}"
+
+    - name: "4.19  dict => JSON string"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.19  to_json(dict_a) = ' ~ (dict_a | to_json) ] }}"
+
+    - name: "4.20  dict => YAML string"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.20  to_yaml(dict_a) = ' ~ (dict_a | to_yaml) ] }}"
+
+    - name: "4.21  Deep copy vs reference"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.21  combine + recursive merge works (see 4.08)'] }}"
+      when: false
+
+    - name: "4.22  Extract value from list of dicts by condition"
+      ansible.builtin.set_fact:
+        items_list: "{{ dict_c['items'] }}"
+    - name: "4.22b"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.22  filter items by id=2 then extract val = ' ~ (items_list | selectattr('id', 'equalto', 2) | map(attribute='val') | first) ] }}"
+
+    - name: "4.23  Dict to list of tuples via dictsort"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.23  dictsort(dict_a) = ' ~ (dict_a | dictsort) ] }}"
+
+    - name: "4.24  Dict2items map values"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.24  dict2items values from dict_a = ' ~ (dict_a | dict2items | map(attribute='value') | list) ] }}"
+
+    - name: "4.25  Combine with recursive and list_merge"
+      ansible.builtin.set_fact:
+        output_lines: "{{ output_lines + ['4.25  combine with list_merge=append = ' ~ ({\"items\": [1]} | combine({\"items\": [2]}, recursive=True, list_merge=\"append\") ) ] }}"
+
+
+    # ─────────────────────────────────────────────────────────────────
+    #  WRITE OUTPUT TO FILE
+    # ─────────────────────────────────────────────────────────────────
+    - name: "Write debug output to file"
+      ansible.builtin.copy:
+        dest: "../debug.dict.txt"
+        content: |
+          {% for line in output_lines -%}
+          {{ line }}
+          {% endfor %}
